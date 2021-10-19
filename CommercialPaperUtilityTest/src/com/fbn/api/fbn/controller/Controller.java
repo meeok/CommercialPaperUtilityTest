@@ -19,7 +19,7 @@ public class Controller implements ConstantsI {
 			outputXml = Api.executeCall(searchTranServiceName, RequestXml.searchRequestXml(startDate, endDate, acctNo, amount, debitCredit, transParts));
 			final String noDuplicateMsg = "NO record exist for entered details";
 
-			if (!Commons.isEmpty(outputXml)) {
+			if (!Shared.isEmpty(outputXml)) {
 				xmlParser.setInputXML(outputXml);
 				String respFlag = xmlParser.getValueOf(apiStatus);
 				if (isSuccess(respFlag)) {
@@ -28,7 +28,7 @@ public class Controller implements ConstantsI {
 					String txnIdApi = xmlParser.getValueOf("tranId");
 					logger.info("txnIdApi: " + txnIdApi);
 
-					if (!Commons.isEmpty(txnIdApi))
+					if (!Shared.isEmpty(txnIdApi))
 						return "Duplicate record exist for this Transaction. Kindly Check Finacle";
 					else if (message.trim().equalsIgnoreCase(noDuplicateMsg))
 						return False;
@@ -52,13 +52,13 @@ public class Controller implements ConstantsI {
     public String getPostTxn(String acct1, String sol1, String amount,String transParticulars, String partTranRemarks, String todayDate, String acct2, String sol2){
 		try {
 			outputXml = Api.executeCall(postServiceName, RequestXml.postTransactionXml(transType, transSubTypeC, acct1, sol1, debitFlag, amount, currencyNgn, transParticulars, partTranRemarks, todayDate, acct2, sol2, creditFlag, LoadProp.utilityUser));
-			if (!Commons.isEmpty(outputXml)){
+			if (!Shared.isEmpty(outputXml)){
 				xmlParser.setInputXML(outputXml);
 				String status = xmlParser.getValueOf(apiStatus);
 
 				if (isSuccess(status)){
 					String txnId = xmlParser.getValueOf("TrnId");
-					if (!Commons.isEmpty(txnId.trim()))
+					if (!Shared.isEmpty(txnId.trim()))
 						return apiSuccess;
 				}
 				else if (isFailed(status)){

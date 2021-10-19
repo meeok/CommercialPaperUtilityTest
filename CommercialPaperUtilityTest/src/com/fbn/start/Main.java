@@ -2,7 +2,7 @@ package com.fbn.start;
 
 import com.fbn.api.newgen.controller.Controller;
 import com.fbn.cp.CpMain;
-import com.fbn.utils.Commons;
+import com.fbn.utils.Shared;
 import com.fbn.utils.ConstantsI;
 import com.fbn.utils.LoadProp;
 
@@ -28,12 +28,12 @@ public class Main implements ConstantsI {
 
                 disconnectSession(sessionId);
 
-                Commons.logger.info("Current thread name-- "+ Thread.currentThread().getName());
+                Shared.logger.info("Current thread name-- "+ Thread.currentThread().getName());
                 Thread.sleep(Long.parseLong(LoadProp.sleepTime));
             }
         }
         catch (Exception e){
-            Commons.logger.info("Exception occurred in Main class-- "+e.getMessage());
+            Shared.logger.info("Exception occurred in Main class-- "+e.getMessage());
             throw new Exception("Exception occurred in Main Class-- "+ e.getMessage());
         }
     }
@@ -48,7 +48,7 @@ public class Main implements ConstantsI {
            // disconnectSession(sessionId);
         }
         catch(Exception e){
-            Commons.logger.info("Exception occurred in Main class-- "+e.getMessage());
+            Shared.logger.info("Exception occurred in Main class-- "+e.getMessage());
             System.out.println("Exception occurred in Main Class-- "+ e.getMessage());
         }
     }

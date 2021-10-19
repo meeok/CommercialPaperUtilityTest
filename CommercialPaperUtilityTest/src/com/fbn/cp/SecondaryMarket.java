@@ -7,7 +7,7 @@ import com.fbn.api.newgen.controller.Controller;
 import com.fbn.api.newgen.customservice.CreateWorkItem;
 import com.fbn.utils.*;
 
-public class SecondaryMarket extends Commons implements ConstantsI {
+public class SecondaryMarket extends Shared implements ConstantsI {
     private  final String sessionId;
     private String postResp;
     public SecondaryMarket(String sessionId) {
@@ -35,7 +35,7 @@ public class SecondaryMarket extends Commons implements ConstantsI {
                 String value = "'" + flag + "'";
                 String condition = "refid = '" + id + "'";
 
-                if (Commons.checkClosedDate(date)) {
+                if (Shared.checkClosedDate(date)) {
                     new Controller().updateRecords(sessionId, Query.setupTblName, Query.stColCloseFlag, value, condition);
                     new CompleteWorkItem(sessionId, wiName, "CLOSEFLAG", "Y");
                     closeSmInvestmentWindow(id);
@@ -52,7 +52,7 @@ public class SecondaryMarket extends Commons implements ConstantsI {
             for (Map<String, String> result : resultSet) {
                 String date = result.get(investClosedate.toUpperCase());
 
-                if (Commons.checkClosedDate(date)) {
+                if (Shared.checkClosedDate(date)) {
                     String investmentId = result.get(investID.toUpperCase());
                     String values = "'Y', 'Closed', 'Y'";
                     String condition = "INVESTMENTID = '" + investmentId + "'";
@@ -79,13 +79,13 @@ public class SecondaryMarket extends Commons implements ConstantsI {
                 String branchSol = result.get(bidBranchSolCol.toUpperCase());
                 String matureDate = result.get(bidmaturityDate);
                 String lienFlag = result.get(bidlienflag);
-                if (Commons.isDaysToMaturity(matureDate, 7) && lienFlag.equalsIgnoreCase("Y")) {
+                if (Shared.isDaysToMaturity(matureDate, 7) && lienFlag.equalsIgnoreCase("Y")) {
                     //send mail to Money_Market_Branch Initiator and Money_Market_Branch_Verifier
-                    new MailSetup(sessionId, bidWiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), Commons.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), mailSubject, mailMessageB);
+                    new MailSetup(sessionId, bidWiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), Shared.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), mailSubject, mailMessageB);
                     //send mail to Customer
                     new MailSetup(sessionId, bidWiName, fbnMailer, cusEmail, empty, mailSubject, mailMessageC);
                 } else {
-                    if (Commons.isMatured(matureDate) && lienFlag.equalsIgnoreCase("N")) {
+                    if (Shared.isMatured(matureDate) && lienFlag.equalsIgnoreCase("N")) {
                         String column = "STATUS,MATUREDFLAG";
                         String value = "'Matured', 'Y'";
                         String condition = "CUSTREFID = '" + id + "'";
@@ -128,11 +128,11 @@ public class SecondaryMarket extends Commons implements ConstantsI {
                         new Controller().updateRecords(sessionId, Query.bidTblName, columnsS, values, condition);
                         new CompleteWorkItem(sessionId, wiName, attribute, flag);
                         String mailMessageS = "";
-                        new MailSetup(sessionId, wiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageS);
+                        new MailSetup(sessionId, wiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageS);
                     } else if (postingNotSuccessful(postResp)) {
                         new Controller().updateRecords(sessionId, Query.bidTblName, columnsF, values, condition);
                         String mailMessageF = "";
-                        new MailSetup(sessionId, wiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageF);
+                        new MailSetup(sessionId, wiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageF);
                     }
                 }
             }

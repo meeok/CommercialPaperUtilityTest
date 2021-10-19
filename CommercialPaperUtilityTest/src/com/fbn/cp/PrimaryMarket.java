@@ -4,7 +4,7 @@ package com.fbn.cp;
 import com.fbn.api.newgen.customservice.CompleteWorkItem;
 import com.fbn.api.newgen.controller.Controller;
 import com.fbn.api.newgen.customservice.CreateWorkItem;
-import com.fbn.utils.Commons;
+import com.fbn.utils.Shared;
 import com.fbn.utils.ConstantsI;
 import com.fbn.utils.LoadProp;
 import com.fbn.utils.Query;
@@ -12,7 +12,7 @@ import com.fbn.utils.MailSetup;
 import java.util.Map;
 
 
-public class PrimaryMarket extends Commons implements ConstantsI {
+public class PrimaryMarket extends Shared implements ConstantsI {
 
     private String postResp;
 
@@ -47,7 +47,7 @@ public class PrimaryMarket extends Commons implements ConstantsI {
                String condition = "refid = '" + id + "'";
                String conditionBidTbl = "winrefid = '" + id + "'";
 
-               if (Commons.checkClosedDate(closedDate)) {
+               if (Shared.checkClosedDate(closedDate)) {
                    new Controller().updateRecords(sessionId, Query.setupTblName, Query.stColCloseFlag, value, condition);
                    processPrimaryBids(id,wiName);
                    new Controller().updateRecords(sessionId, Query.bidTblName, Query.stColCloseFlag, value, conditionBidTbl);
@@ -84,7 +84,7 @@ public class PrimaryMarket extends Commons implements ConstantsI {
             columns = "CP_UTILITYFLAG";
             String values = "'Y'";
             new Controller().updateRecords(sessionId, Query.extTblName, columns, values, condition);
-            new MailSetup(sessionId, wiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
+            new MailSetup(sessionId, wiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
         }
     }
     private String getCpGroupIndex(String wiName,String tenor,String rateType, String rate){
@@ -129,11 +129,11 @@ public class PrimaryMarket extends Commons implements ConstantsI {
                     new Controller().updateRecords(sessionId, Query.bidTblName, columnsS, values, condition);
                     new CompleteWorkItem(sessionId, wiName, attribute, flag);
                     String mailMessageS = "A successful reversal request for failed Primary Market Commercial Paper with number '" + wiName + "' now being reversed successfully.";
-                    new MailSetup(sessionId, bidWiname, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageS);
+                    new MailSetup(sessionId, bidWiname, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageS);
                 } else if (postingNotSuccessful(postResp)) {
                     new Controller().updateRecords(sessionId, Query.bidTblName, columnsF, values, condition);
                     String mailMessageF = "A reversal request for failed Primary Market Commercial Paper with number '" + wiName + "' has failed posting.<br>Please log into the iBPS workflow to execute action ";
-                    new MailSetup(sessionId, bidWiname, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageF);
+                    new MailSetup(sessionId, bidWiname, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessageF);
                 }
             }
         }
@@ -158,7 +158,7 @@ public class PrimaryMarket extends Commons implements ConstantsI {
 
             new CompleteWorkItem(sessionId, wiName);
             String mailMessage = "Kindly login to post transactions Utility failed to post for failed Primary Market Commercial Paper with Workitem number '" + wiName + "'";
-            new MailSetup(sessionId, wiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
+            new MailSetup(sessionId, wiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
         }
     }
     
@@ -218,7 +218,7 @@ public class PrimaryMarket extends Commons implements ConstantsI {
             new CompleteWorkItem(sessionId, wiName);
             //send mail to TUSer
             String mailMessage = "Kindly login to post transactions Utility failed to post for Success bids Primary Market Commercial Paper with Workitem number '" + wiName + "'";
-            new MailSetup(sessionId, wiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
+            new MailSetup(sessionId, wiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
         }
     }
     
@@ -240,13 +240,13 @@ public class PrimaryMarket extends Commons implements ConstantsI {
                 String branchSol = result.get(bidBranchSolCol.toUpperCase());
                 String matureDate = result.get(bidmaturityDate);
                 String lienFlag = result.get(bidlienflag);
-                if (Commons.isDaysToMaturity(matureDate, 7) && lienFlag.equalsIgnoreCase(flag)) {
+                if (Shared.isDaysToMaturity(matureDate, 7) && lienFlag.equalsIgnoreCase(flag)) {
                     //send mail to Money_Market_Branch Initiator and Money_Market_Branch_Verifier
-                    new MailSetup(sessionId, bidWiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), Commons.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), mailSubject, mailMessageB);
+                    new MailSetup(sessionId, bidWiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), Shared.getUsersMailsInGroup("TUSERS_'" + branchSol + "'"), mailSubject, mailMessageB);
                     //send mail to Customer
                     new MailSetup(sessionId, bidWiName, fbnMailer, cusEmail, empty, mailSubject, mailMessageC);
                 } else {
-                    if (Commons.isMatured(matureDate) && lienFlag.equalsIgnoreCase("N")) {
+                    if (Shared.isMatured(matureDate) && lienFlag.equalsIgnoreCase("N")) {
                         String column = "STATUS,MATUREDFLAG";
                         String value = "'Matured', 'Y'";
                         String condition = "CUSTREFID = '" + id + "'";
@@ -294,7 +294,7 @@ public class PrimaryMarket extends Commons implements ConstantsI {
                 } else if (postingNotSuccessful(postResp)) {
                     new Controller().updateRecords(sessionId, Query.bidTblName, columnsF, values, condition);
                     String mailMessage = "Kindly login to post transactions Utility failed to post for Matured Primary Market Commercial Paper with Workitem number '" + wiName + "'";
-                    new MailSetup(sessionId, wiName, fbnMailer, Commons.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
+                    new MailSetup(sessionId, wiName, fbnMailer, Shared.getUsersMailsInGroup("TUSERS"), empty, mailSubject, mailMessage);
                 }
             }
         }
