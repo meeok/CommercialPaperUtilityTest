@@ -11,6 +11,7 @@ public class CpMain implements Runnable {
 
     private void execute (){
 
+    	//test push
         System.out.println("sessionId: "+sessionId());
         new PrimaryMarket(sessionId()).main();
        // new SecondaryMarket(sessionId).main();
